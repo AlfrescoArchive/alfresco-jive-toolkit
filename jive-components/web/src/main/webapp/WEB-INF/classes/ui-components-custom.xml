@@ -1,0 +1,177 @@
+<?xml version="1.0"?>
+
+<components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:noNamespaceSchemaLocation="http://www.jivesoftware.com/schemas/clearspace/1_1/ui-components.xsd">
+
+	<component id="community-actions">
+        <tab id="community-actions-tab">
+            
+            <item id="jive-link-createDocument-manage" name="main.documents.manage_file.link"
+                  cssClass="jive-icon-med jive-icon-document" module="wiki">
+                <when>
+                    <![CDATA[(DocumentPermHelper.getCanCreateDocument(community) && jiveContext.getBinaryBodyManager().isBinaryBodyEnabled())]]></when>
+                <url><![CDATA[<@s.url action="choose-container-remote" method="input">
+                        <@s.param name="contentType" value="${JiveConstants.DOCUMENT?c}"/>
+                        <@s.param name="containerType" value="${community.objectType?c}"/> 
+                        <@s.param name="container" value="${community.ID?c}"/>                       
+                        <@s.param name="upload" value="true"/>
+                        <@s.param name="managed" value="true"/>
+                    </@s.url>]]></url>
+                    
+                    <!--
+                    <url><![CDATA[<@s.url value='/edit-profile-avatar!input.jspa?targetUser=${targetUser.ID?c}'/>]]></url>
+                    -->
+            </item>   
+            
+            <item id="jive-link-linkDocument-manage" name="main.documents.link_managed_file.link"
+                  cssClass="jive-icon-med jive-icon-document" module="wiki">
+                <when>
+                    <![CDATA[(DocumentPermHelper.getCanCreateDocument(community) && jiveContext.getBinaryBodyManager().isBinaryBodyEnabled())]]></when>
+                <url><![CDATA[<@s.url action="choose-document-remote" method="input">
+                        <@s.param name="contentType" value="${JiveConstants.DOCUMENT?c}"/>
+                        <@s.param name="containerType" value="${community.objectType?c}"/> 
+                        <@s.param name="container" value="${community.ID?c}"/>                       
+                        <@s.param name="upload" value="false"/>
+                        <@s.param name="managed" value="true"/>
+                    </@s.url>]]></url>
+                    
+                    <!--
+                    <url><![CDATA[<@s.url value='/edit-profile-avatar!input.jspa?targetUser=${targetUser.ID?c}'/>]]></url>
+                    -->
+            </item>            
+        </tab>        
+    	</component>
+    	
+    	<component id="document-actions">
+        <tab id="document-actions-tab" name="doc.main.actions.gtitle">
+            <item id="jive-link-edit1" cssClass="jive-icon-med jive-icon-edit">
+                <name><![CDATA[<#import "/template/global/include/jive-macros.ftl" as jive><span class="jive-wiki-edit-action-notification"><span class="jive-icon-med jive-icon-edit"></span>
+                                <em><@s.text name="settings.currntlyEditedBy.label" /> <@jive.userDisplayNameLink user=document.editUser /></em>
+                                </span>]]></name>
+                <when>
+                    <![CDATA[(allowedToEdit && document.textBody) && (document.documentBeingEdited && !pageUserEditingDocument)]]></when>
+            </item>
+            <item id="jive-link-edit2" name="doc.main.edit_document.link" cssClass="jive-icon-med jive-icon-edit">
+                <url>
+                    <![CDATA[<@s.url value='/docs/${document.documentID}/edit?containerType=${container.objectType?c}&container=${container.ID?c}'/>]]></url>
+                <when>
+                    <![CDATA[(latestVersion) && (allowedToEdit && document.textBody) && (!document.documentBeingEdited || pageUserEditingDocument)]]></when>
+            </item>
+            <item id="jive-link-edit3" name="doc.ver.edit_docuument.link" cssClass="jive-icon-med jive-icon-edit">
+                <url>
+                    <![CDATA[<@s.url value='/docs/${document.documentID}/edit?containerType=${container.objectType?c}&container=${container.ID?c}'/>]]></url>
+                <when>
+                    <![CDATA[(!latestVersion) && (allowedToEdit && document.textBody) && (!document.documentBeingEdited || pageUserEditingDocument)]]></when>
+            </item>
+           <item id="jive-link-edit4" name="doc.main.edit_document.link" cssClass="jive-icon-med jive-icon-edit">
+                <url><![CDATA[<@s.url value='/docs/${document.documentID}/managed'/>]]></url>
+                <when><![CDATA[(allowedToEdit && (document.documentType.ID == 2))]]></when>
+            </item>
+            
+            <item id="jive-link-edit" name="doc.main.edit_document.link" cssClass="jive-icon-med jive-icon-edit">
+                <url><![CDATA[<@s.url value='/docs/${document.documentID}/upload'/>]]></url>
+                <when><![CDATA[(allowedToEdit && !document.textBody &&
+                (document.documentType.ID == jiveContext.getDocumentTypeManager().getDefaultDocumentType().getID()))]]></when>
+            </item>
+            <item id="jive-link-restore" name="doc.restoreThisVersion.link"
+                  cssClass="jive-icon-med jive-icon-move">
+                <url><![CDATA[javascript:restoreVersion(${version?c});]]></url>
+                <when><![CDATA[(allowedToEdit && !latestVersion && 
+                (document.documentType.ID == jiveContext.getDocumentTypeManager().getDefaultDocumentType().getID()))]]></when>
+            </item>
+            <item id="jive-link-manage-versions" name="doc.main.manage_doc.link"
+                  cssClass="jive-icon-med jive-icon-document-manage">
+                <url><![CDATA[<@s.url value='/docs/${document.documentID}/version'/>]]></url>
+                <when><![CDATA[allowedToEdit && 
+                (document.documentType.ID == jiveContext.getDocumentTypeManager().getDefaultDocumentType().getID())]]></when>
+            </item>
+            
+            <item id="jive-link-abuse" name="doc.report_abuse.link" cssClass="jive-icon-med jive-icon-warn">
+                <when>
+                    <![CDATA[jiveContext.getAbuseManager().isReportAbuseEnabled() && (document.status == Status.PUBLISHED || document.status == Status.ABUSE_VISIBLE) && (user?exists && !user.anonymous && user.ID?c != document.user.ID?c)]]></when>
+                <url>
+                    <![CDATA[<@s.url action='message-abuse' method='input'><@s.param name='objectID' value='${document.ID?c}'/><@s.param name='objectType' value='${document.objectType?c}'/></@s.url>]]></url>
+            </item>
+            <item id="jive-link-move" name="doc.main.move_document.link" cssClass="jive-icon-med jive-icon-move"
+                  url="#">
+                <when>
+                    <![CDATA[(JiveContainerPermHelper.isContainerModerator(container) || DocumentPermHelper.isAllowedToEdit(document, user)) && (!document.documentBeingEdited || pageUserEditingDocument)]]></when>
+            </item>
+            <item id="jive-link-manage-private-doc-collab" name="doc.main.manage_private_collab.link"
+                  cssClass="jive-icon-med jive-icon-document-collaboration">
+                <url><![CDATA[<@s.url value='/docs/${document.documentID}/collaborate'/>]]></url>
+                <when><![CDATA[allowedToModifyApprovers && DocumentPermHelper.isInUserContainer(document)]]></when>
+            </item>
+
+            <item id="jive-link-manage-doc-collab" name="doc.main.manage_collab.link"
+                  cssClass="jive-icon-med jive-icon-document-collaboration">
+                <url><![CDATA[<@s.url value='/docs/${document.documentID}/collaborate'/>]]></url>
+                <when><![CDATA[allowedToModifyApprovers && !DocumentPermHelper.isInUserContainer(document)]]></when>
+            </item>
+            <item id="jive-link-delete" name="doc.main.delete_document.link"
+                  cssClass="jive-icon-med jive-icon-delete" url="#">
+                <when>
+                    <![CDATA[allowedToDelete && allowedToEdit && (!document.documentBeingEdited || pageUserEditingDocument)]]></when>
+            </item>
+
+            <item id="jive-link-document-pdf" name="doc.download_as_pdf.link"
+                  cssClass="jive-icon-med jive-icon-doctype-acrobat">
+                <url><![CDATA[<@s.url value='/docs/${document.documentID}.pdf' />]]></url>
+                <when><![CDATA[user?exists && !user.anonymous && document.textBody]]></when>
+            </item>
+            <!--
+            <item id="jive-link-thread-print" name="print.preview.link"
+                  cssClass="jive-icon-med jive-icon-print-preview">
+                <url><![CDATA[<@s.url value='/docs/${document.documentID}?decorator=print' />]]></url>
+                <when>document.textBody</when>
+            </item>
+            -->
+
+            <item id="jive-link-thread-watch" name="thread.start_watch.link"
+                  cssClass="jive-icon-med jive-icon-message-open" url="#">
+                <when>
+                    <![CDATA[user?exists && !user.anonymous && !action.isWatching(document) && action.isWatchingEnabled()]]></when>
+            </item>
+
+            <item id="jive-link-thread-unwatch" name="thread.stop_watch.link"
+                  cssClass="jive-icon-med jive-icon-message-open" url="#">
+                <when>
+                    <![CDATA[user?exists && !user.anonymous && action.isWatching(document) && action.isWatchingEnabled()]]></when>
+            </item>
+
+            <item id="featured-toggle-unfeature" url="#" onclick="toggleFeatured(); return false;"
+                  name="featuredcontent.unfeature">
+                <cssClass>
+                    jive-icon-med jive-icon-forbidden
+                </cssClass>
+                <when>
+                    <![CDATA[JiveContainerPermHelper.isContainerAdmin(container) && document.status == Status.PUBLISHED]]></when>
+                <style>
+                    <![CDATA[<#if !action.isFeatureable(document)>display:none<#elseif !action.isFeatured(document) >display:none</#if>]]></style>
+
+            </item>
+            <item id="featured-toggle-feature" url="#" onclick="toggleFeatured(); return false;"
+                  name="featuredcontent.feature">
+                <cssClass>
+                    jive-icon-med jive-icon-plus
+                </cssClass>
+                <when>
+                    <![CDATA[JiveContainerPermHelper.isContainerAdmin(container) && document.status == Status.PUBLISHED]]></when>
+                <style>
+                    <![CDATA[<#if !action.isFeatureable(document)>display:none<#elseif action.isFeatured(document) >display:none</#if>]]></style>
+
+            </item>
+            <item id="jive-link-document-stopTracking" name="global.stop_tracking"
+                  cssClass="jive-icon-med jive-icon-stop-tracking" url="#">
+                <style>
+                    <![CDATA[<#if !action.isTrackable()>display:none<#elseif !action.isTracked() >display:none</#if>]]></style>
+            </item>
+            <item id="jive-link-document-startTracking" name="global.track" cssClass="jive-icon-med jive-icon-track"
+                  url="#">
+                <style>
+                    <![CDATA[<#if !action.isTrackable()>display:none<#elseif action.isTracked() >display:none</#if>]]></style>
+            </item>
+        </tab>
+    </component>
+    
+</components>

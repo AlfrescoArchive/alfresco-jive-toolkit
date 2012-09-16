@@ -1,0 +1,9 @@
+.doclist .onJiveActionSocialize a.action-link 
+{
+    background-image: url("jive-16.png");
+}
+
+.toolbar .onJiveActionSocialize 
+{
+    background-image: url("jive-16.png");
+}

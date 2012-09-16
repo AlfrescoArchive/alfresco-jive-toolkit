@@ -1,0 +1,9 @@
+# Copy this file to TestJiveToolkitCmisAuthenticationProvider-override.properties to enable it.
+
+# Any settings in this file will override the values defined in TestJiveToolkitCmisAuthenticationProvider.properties
+jivetoolkit.alfresco.url= 
+jivetoolkit.alfresco.userName=
+jivetoolkit.alfresco.password=
+
+# Remember: this must match whatever has been configured in Alfresco
+jivetoolkit.shared.password=

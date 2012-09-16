@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+	   xmlns:jaxws="http://cxf.apache.org/jaxws"
+	   xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
+		http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd"
+       default-autowire="no" default-init-method="init" default-destroy-method="destroy">
+	<!-- 
+	<import resource="classpath:com/jivesoftware/api/core/spring-coreContext.xml"/>
+	 -->
+	     
+	<bean id="connectorPlugin" class="org.alfresco.jive.plugin.ConnectorPlugin" />
+		
+	<bean id="managedDocumentContentObjectTypeInfoProvider"
+          class="org.alfresco.jive.community.impl.ManagedDocumentContentObjectTypeInfoProvider">
+        <property name="documentManager" ref="documentManager"/>
+    </bean>
+    
+	<bean id="alfrescoNavigationManager" 
+			class="org.alfresco.jive.cmis.manager.AlfrescoNavigationManagerImpl" >
+		<property name="alfrescoNavigationDAO" ref="alfrescoNavigationDAO" />        
+		<property name="cmisDocumentDAO" ref="cmisDocumentDAO" />
+    </bean>
+	
+	<bean id="alfrescoNavigationDAO" 
+			class="org.alfresco.jive.cmis.dao.AlfrescoNavigationDAOImpl" >
+		<property name="userSessionCache" ref="userSessionCache" />
+		<property name="userManager" ref="userManagerImpl"/>	
+        <property name="dataSource">
+            <util:property-path path="dataSourceFactory.dataSource"/>
+        </property>
+    </bean>
+    
+    <bean id="cmisDocumentDAO" class="org.alfresco.jive.cmis.dao.DbCmisDocumentDAO">
+        <property name="dataSource">
+            <util:property-path path="dataSourceFactory.dataSource"/>
+        </property>        
+        <property name="imageDAO" ref="imageDAO"/>
+        <property name="binaryBodyCache" ref="binaryBodyCache"/>
+        <property name="versionManagerProvider" ref="versionManagerProviderImpl"/>
+        <property name="attachmentDAO" ref="attachmentDAO"/>
+        <property name="binaryBodyDAO" ref="binaryBodyDAO"/>
+    </bean>
+    
+     <bean id="userSessionCache" parent="cacheBean" depends-on="cacheFactoryManager">
+        <constructor-arg value="Users Session Cache" />
+    </bean>
+    
+    <bean id="cmisStorageProvider" class="org.alfresco.jive.community.impl.CmisStorageProvider">
+    	<property name="alfrescoNavigationManager" ref="alfrescoNavigationManager"/>
+    </bean>
+    
+    <bean id="cmisBinaryBodyProviderImpl" class="org.alfresco.jive.community.impl.CmisBinaryBodyProvider">
+        <property name="binaryBodyManager" ref="binaryBodyManagerImpl"/>
+        <property name="binaryBodyCache" ref="binaryBodyCache"/>
+        <property name="binaryBodyDAO" ref="binaryBodyDAO"/>
+        <property name="cmisStorageProvider" ref="cmisStorageProvider"/>        
+        <property name="storageProvider">
+            <util:property-path path="storageProviderFactory.storageProvider"/>
+        </property>
+         
+    </bean>
+
+    <bean id="documentProviderImpl" class="org.alfresco.jive.community.impl.CmisDocumentProvider">
+        <property name="queryCacheManager" ref="queryCacheManagerImpl"/>
+        <property name="binaryBodyProvider" ref="binaryBodyProviderImpl"/>        
+        <property name="cmisBinaryBodyProvider" ref="cmisBinaryBodyProviderImpl"/>
+        <property name="versionManagerProvider" ref="versionManagerProviderImpl"/>
+        <property name="approvalManager" ref="approvalManager"/>
+        <property name="eventDispatcher" ref="jiveEventDispatcher"/>
+    </bean>
+    
+    <bean id="binaryBodyManagerImpl" scope="singleton" parent="jiveManager" init-method="init"
+          class="org.alfresco.jive.community.impl.CmisBinaryBodyManager">
+        <constructor-arg type="long" index="0" value="-1"/>
+        <property name="documentTypeDAO" ref="documentTypeDAO"/>
+        <property name="binaryBodyDAO" ref="binaryBodyDAO"/>
+        <property name="binaryBodyManagerDAO" ref="binaryBodyManagerDAO"/>
+        <property name="cmisBinaryBodyProvider" ref="cmisBinaryBodyProviderImpl"/>
+        <property name="cmisStorageProvider" ref="cmisStorageProvider"/>
+        <property name="documentManager" ref="documentManager"/>
+        <property name="storageProvider">
+            <util:property-path path="storageProviderFactory.storageProvider"/>
+        </property>
+    </bean>
+    
+    <bean id="docUrlMapping" scope="prototype"
+          class="org.alfresco.jive.community.web.struts.mapping.DocURLMapping"/>
+          
+    <bean id="placeContentActionLinks" class="com.jivesoftware.community.util.spring.MergeableCollection"
+          scope="prototype">
+        <property name="source">
+            <util:list value-type="com.jivesoftware.community.web.component.ActionLink" scope="prototype">
+                <ref bean="placeCreateDiscussionLink"/>
+                <ref bean="placeCreateDocumentLink"/>
+                <ref bean="placeCreateBinaryDocumentLink"/>
+                <ref bean="placeCreateBlogPostLink"/>
+                <ref bean="placeCreatePollLink"/>
+                <ref bean="placeCreateManagedDocumentLink"/>
+                <ref bean="placeLinkManagedDocumentLink"/>
+            </util:list>
+        </property>
+    </bean>
+    
+    <bean id="placeCreateManagedDocumentLink" class="org.alfresco.jive.community.places.PlaceCreateManagedDocumentLink"
+          scope="prototype" parent="actionLinkBase">
+        <property name="iconCss" value="jive-icon-document"/>
+        <property name="nameKey" value="main.documents.manage_file.link"/>
+        <property name="uploadable" value="true"/>        
+    </bean>
+
+    <bean id="placeLinkManagedDocumentLink" class="org.alfresco.jive.community.places.PlaceCreateManagedDocumentLink"
+          scope="prototype" parent="actionLinkBase">
+        <property name="iconCss" value="jive-icon-document"/>
+        <property name="nameKey" value="main.documents.link_managed_file.link"/>
+        <property name="uploadable" value="false"/>        
+    </bean>
+	
+	<!-- Web Services -->
+	
+    <bean id="alfrescoServiceImpl" class="org.alfresco.jive.community.ws.AlfrescoServiceImpl"
+          parent="remoteSupport">
+        <!--   
+      	<property name="paginationHelper" ref="paginationHelperV1"/>
+        <property name="spaceProvider" ref="spaceProviderV1"/>
+         -->
+        <property name="documentManager" ref="documentManager" />        
+        <property name="communityManager" ref="communityManager" />
+		<property name="alfrescoNavigationManager" ref="alfrescoNavigationManager" />
+    	<property name="rootSpace">
+            <bean factory-bean="communityManager" factory-method="getRootCommunity"/>
+        </property>
+    </bean>
+	
+    <jaxrs:server id="alfrescoRestServer" address="/rest/alfrescoService">
+        <jaxrs:serviceBeans>            
+            <ref bean="alfrescoServiceImpl"/>            
+        </jaxrs:serviceBeans>
+        <jaxrs:providers>
+            <ref bean="jacksonJsonProvider"/>            
+        </jaxrs:providers>        
+    </jaxrs:server>
+</beans>

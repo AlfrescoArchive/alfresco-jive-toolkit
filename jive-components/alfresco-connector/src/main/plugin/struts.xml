@@ -1,0 +1,137 @@
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+    
+    <package name="alfresco-connector-admin-actions" extends="community-admin-default" namespace="/admin">
+    <!-- Content Management -->
+        <action name="manage-documents"
+                class="org.alfresco.jive.community.action.admin.DocumentManagementAction">
+            <result name="success" type="freemarker">/template/docs/admin/manage-documents.ftl
+            </result>
+            <result name="editDocument" type="redirect">
+                /doc-edit!input.jspa?documentID=${documentID}
+            </result>
+            <result name="editBinaryDocument" type="redirect">
+                /docs/${documentID}/upload
+            </result>
+            <result name="deleted" type="redirect">
+                /admin/manage-documents.jspa?communityID=${communityID}
+            </result>
+            <result name="undeleted" type="redirect">
+                /admin/manage-documents.jspa?communityID=${communityID}
+            </result>
+        </action>
+    </package>
+    
+    <package name="alfresco-connector-actions" extends="community-default">
+    
+    	<!-- JIVE-50 
+    	<action name="doc-delete" class="org.alfresco.jive.community.action.DocDeleteAction">
+            <interceptor-ref name="defaultStack"/>
+            <interceptor-ref name="token"/>
+            <result name="success" type="redirect">${communityURL}</result>
+        </action>
+		 -->
+		 
+        <action name="choose-container" class="org.alfresco.jive.community.action.ChooseContainerAction">
+            <result name="cancel">${refererURL}</result>
+            <result name="input">/plugins/alfresco-connector/resources/templates/choose-container.ftl</result>
+            <result name="success" type="redirect">${successRedirectUrl}</result>
+            <result name="success-doc-upload" type="redirect">doc-upload!input.jspa?container=${container.ID}&amp;containerType=${container.objectType}&amp;tagSet=${tagSet != null ? tagSet : ""}&amp;tags=${tags != null ? URLEncodedTags : ""}&amp;subject=${subject != null ? URLEncodedSubject : ""}</result>
+            <result name="remote-container-input" type="redirect">choose-container-remote!input.jspa?contentType=102&amp;containerType=${container.objectType}&amp;container=${container.ID}&amp;upload=true&amp;managed=true</result>            
+        </action>
+			 
+        <action name="choose-container-remote" class="org.alfresco.jive.community.action.ChooseRemoteContainerAction">
+            <result name="cancel">${refererURL}</result>
+            <result name="input">/plugins/alfresco-connector/resources/templates/choose-container-remote.ftl</result>
+            <result name="success" type="redirect">${successRedirectUrl}&amp;remoteContainer=${remoteContainer}</result>                        
+        </action>
+        
+        <action name="choose-document-remote" class="org.alfresco.jive.community.action.ChooseRemoteDocumentAction">
+            <result name="cancel">${refererURL}</result>
+            <result name="input">/plugins/alfresco-connector/resources/templates/choose-document-remote.ftl</result>
+            <result name="success" type="redirect">${successRedirectUrl}&amp;remoteDocument=${remoteDocument}</result>                        
+        </action>
+ 
+    	<action name="doc-managed-upload" class="org.alfresco.jive.community.action.ManagedDocUploadAction">
+            <interceptor-ref name="paramsPrepareParamsStack"/>
+            <interceptor-ref name="token">
+                <param name="excludeMethods">cancel,default,imagePicker,input</param>
+            </interceptor-ref>
+            <result name="cancel" type="redirect">${cancelURL}</result>
+            <result name="success" type="redirect">/docs/${document.documentID}?uploadSuccess=true</result>
+            <result name="successDraft" type="redirect">/docs/${document.documentID}</result>
+            <result name="community-input" type="redirect">choose-container!input.jspa?contentType=102&amp;upload=true
+            </result>
+            <result name="input">/plugins/alfresco-connector/resources/templates/doc-managed-upload.ftl</result>
+            <result name="doc-type-error" type="redirect">doc-managed-upload.jspa?container=${container.ID}&amp;containerType=${container.objectType}</result>
+            <result name="version-error" type="redirect">doc-create-version-error!update.jspa?document=${documentID}
+            </result>
+        </action>
+         
+        <action name="doc-managed-upload-edit" class="org.alfresco.jive.community.action.ManagedDocUploadAction">
+            <interceptor-ref name="paramsPrepareParamsStack"/>
+            <interceptor-ref name="token">
+                <param name="excludeMethods">cancel,default,imagePicker,input</param>
+            </interceptor-ref>
+            <param name="edit">true</param>
+            <result name="cancel" type="redirect">/docs/${document.documentID}</result>
+            <result name="success" type="redirect">/docs/${document.documentID}</result>
+            <result name="successDraft" type="redirect">/docs/${document.documentID}</result>
+            <result name="input">/plugins/alfresco-connector/resources/templates/doc-managed-upload.ftl</result>
+            <result name="doc-type-error" type="redirect">doc-managed-upload.jspa?container=${container.ID}&amp;containerType=${container.objectType}</result>
+            <result name="version-error" type="redirect">doc-create-version-error!update.jspa?document=${documentID}
+            </result>
+        </action>
+         
+    	<action name="doc-managed-link" class="org.alfresco.jive.community.action.ManagedDocLinkAction">
+            <interceptor-ref name="paramsPrepareParamsStack"/>
+			
+            <interceptor-ref name="token">
+                <param name="excludeMethods">cancel,default,imagePicker,input</param>
+            </interceptor-ref>			
+            <result name="cancel" type="redirect">${cancelURL}</result>			
+            <result name="success" type="redirect">
+            	/docs/${document.documentID}?uploadSuccess=true
+			</result>			
+            <result name="successDraft" type="redirect">/docs/${document.documentID}</result>
+			
+			<!--
+            <result name="community-input" type="redirect">
+            	choose-container!input.jspa?contentType=102&amp;upload=true
+			</result>
+			-->
+            <result name="input">
+            	/plugins/alfresco-connector/resources/templates/link-managed-document.ftl
+			</result>
+        </action>
+        
+        <!-- document actions -->
+        <action name="document" class="com.jivesoftware.community.action.DocumentAction">
+            <interceptor-ref name="defaultStack"/>
+            <interceptor-ref name="token">
+                <param name="excludeMethods">input,cancel,doc-deleted,success,execute</param>
+            </interceptor-ref>
+            <interceptor-ref name="documentViewCount"/>
+            <result name="doc-deleted" type="httpstatusview">
+                <param name="status">404</param>
+                <param name="location">/template/docs/document-deleted.ftl</param>
+            </result>
+            <result name="success">/plugins/alfresco-connector/resources/templates/docs/document.ftl</result>
+            <result name="approved" type="redirect">/docs/${document.documentID}?approved=true</result>
+            <result name="rejected" type="redirect">/docs/${document.documentID}?rejected=true</result>
+        </action>
+		
+        
+    </package>
+    
+
+	<package name="alfresco-connector-json-actions" extends="json-default">
+		<!-- File/Directory listing in JSON object -->
+		<action name="getRemoteContainer"
+			class="org.alfresco.jive.cmis.action.JSONAlfrescoNavigationAction">
+			<result type="json" />
+		</action>
+	</package>
+	
+</struts>

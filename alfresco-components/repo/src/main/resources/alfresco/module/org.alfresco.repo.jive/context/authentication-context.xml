@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN//EN' 'http://www.springframework.org/dtd/spring-beans.dtd'>
+<beans>
+  
+  <!-- Encryption class used for encrypting / decrypting user ids -->
+  <bean id="jive.encrypter" class="org.alfresco.util.encryption.impl.AES256PasswordBasedEncrypter">
+    <constructor-arg index="0" value="${jivetoolkit.shared.password}" />
+  </bean>
+
+  <!-- Custom Web Script authenticator used to provide a custom authentication scheme in front of CMIS -->
+  <bean id="webscripts.authenticator.jivetoolkit" class="org.alfresco.repo.web.scripts.servlet.jive.JiveToolkitAuthenticatorFactory">
+    <property name="authenticationService"   ref="AuthenticationService" />
+    <property name="authenticationComponent" ref="AuthenticationComponent" />
+    <property name="encrypter"               ref="jive.encrypter" />
+  </bean>
+  
+</beans>

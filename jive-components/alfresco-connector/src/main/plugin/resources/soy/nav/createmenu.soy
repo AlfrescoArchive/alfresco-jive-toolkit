@@ -1,0 +1,153 @@
+{namespace jive.nav.menu.create}
+/**
+* Renders menu options for selecting a type of content to create.
+*
+* @param sections A collection of {@CreateMenuSection}s, each with link children.
+* @param smallView? use the small create menu if true or the large menu otherwise
+*
+* @depends template=jive.nav.menu.create.contentTypeLinkItem
+* @depends path=/resources/scripts/apps/navbar/menu/create/main.js
+* @depends i18nKeys=nav.bar.create.*
+*/
+{template .contentTypes}
+    <nav>
+        <ul>
+            {foreach $section in $sections}
+                {if $section.visible}
+                    <li class="{if isFirst($section)}active{/if} j-create-menu-section" id="create-section-{index($section)}">
+                    <a href="#">{i18nText($section.name)}</a></li>
+                {/if}
+             {/foreach}
+        </ul>
+    </nav>
+
+    {foreach $section in $sections}
+        {if $section.visible}
+            <ul id="create-list-{index($section)}" class="j-icon-list js-create-list" {if not isFirst($section)}style="display: none;"{/if}>
+                {foreach $item in $section.items}
+                    {if ($item.visible)}
+                        {call .contentTypeLinkItem data="$item"}
+                            {param smallView: $smallView /}
+                        {/call}
+                    {/if}
+               {/foreach}
+            </ul>
+        {/if}
+    {/foreach}
+    
+    {if $smallView}
+        <a href="#" class="toggle j-menu-quick-bottomlink js-use-large-menu">{i18nText('nav.bar.create.use_large_link')}</a>
+    {else}
+        <a href="#" class="toggle j-menu-quick-bottomlink js-use-small-menu">{i18nText('nav.bar.create.use_small_link')}</a>
+    {/if}
+{/template}
+
+/**
+ * Displays a link to select a specific type of content.
+ *
+ * @param uploadable? Is the content type available to upload as a creation option?
+ * @param uploadLink? A special link for uploading into the content type instead of creating within the app.
+ * @param smallView? use the small create menu if true or the large menu otherwise
+ */
+{template .contentTypeLinkItem}
+    <li>{call .contentTypeLink data="all"/}</li>
+    {if $uploadable} /* special behavior for things that can be uploaded */
+         <li>{call .contentTypeLink data="$uploadLink"}
+                {param upload: true/}
+                {param smallView: $smallView/}
+             {/call}
+         </li>
+         <li>{call .contentTypeLink data="$uploadLink"}
+                {param upload: true/}
+                {param managed: true/}
+                {param smallView: $smallView/}
+                {param nameKey: 'nav.bar.create.heading.managed'/}
+                {param smallNameKey: 'nav.bar.create.heading.managed'/}
+                {param descriptionKey: 'nav.bar.create.description.managed'/}
+             {/call}
+         </li>
+    {/if}
+{/template}
+
+/**
+ * Displays a link to select a specific type of content.
+ *
+ * @param nameKey i18n key for the text to display with this link
+ * @param smallNameKey? i18n key for the text to display with this link in small view
+ * @param descriptionKey i18n key for the extended description to display with this item
+ * @param urlParams parameters associated with this content type
+ * @param iconCss The link icon CSS classes, if any.
+ * @param linkCss The link anchor CSS classes, if any.
+ * @param iconSize The size of the icon to render.  Choices are "sml", "med", and "big".  Default is "med".
+ * @param? upload Is this an upload link?
+ * @param? managed Is this a managed link?
+ * @param smallView? use the small create menu if true or the large menu otherwise
+ */
+{template .contentTypeLink}
+    {if $iconCss}
+        /* Only certain links need to follow an href to another page.  Currently
+         * this includes groups. */
+         
+       {if $managed}  
+         <a href="/choose-container!input.jspa?contentType=102&containerType=14&upload=true&managed=true">
+       {else}  
+        <a href="{call .contentTypeHref data="all"}
+               {param legacy: length(match($linkCss, 'js-legacy-create')) > 0/}
+           {/call}"
+           
+           class="{$linkCss}"
+           {if $urlParams and $urlParams.contentType}
+               {sp}data-content-type="{$urlParams.contentType}"
+           {/if}
+           {if $upload}
+               {sp}data-upload="true"
+           {/if}
+           {if length(match($linkCss, 'quick')) > 0}
+               {sp}data-quick-create-url="{call .contentTypeHref data="all"}{param legacy: true /}{/call}"
+           {/if}>
+         {/if}  
+            <span class="{$iconCss} jive-icon-{if $iconSize}{$iconSize}{elseif $smallView}med{else}big{/if}"></span>
+            {i18nText($smallView and $smallNameKey ? $smallNameKey : $nameKey)}
+        </a>
+        
+    {/if}
+
+    {if not $smallView and $descriptionKey}
+        <p>{i18nText($descriptionKey)}</p>
+    {/if}
+{/template}
+
+
+
+/**
+ * Returns the appropriate href value for a given content type link.
+ *
+ * @param url a create URL associated iwth this content type
+ * @param urlParams parameters associated with this content type
+ * @param? legacy if true outputs an actual href
+ */
+{template .contentTypeHref}
+    {if $legacy}
+        {if $urlParams}{buildUrl($url, $urlParams)}{else}{buildUrl($url)}{/if}
+    {else}
+        javascript:void(0)
+    {/if}
+{/template}
+
+/**
+* A template for quick create items where the HTML lives in an div and is rendered in.
+*
+* @param title The quick menu title
+* @param body The quick menu body
+*/
+{template .quick}
+<div class="jive-modal jive-modal-quickcreate">
+    <header>
+        <h2 class="js-title">{$title}</h2>
+    </header>
+    <a href="#" class="j-modal-close-top close">{i18nText('global.close')}  <span class="j-close-icon j-ui-elem"></span></a>
+    <section class="jive-modal-content">
+        {$body|noAutoescape}
+    </section>
+</div>
+{/template}

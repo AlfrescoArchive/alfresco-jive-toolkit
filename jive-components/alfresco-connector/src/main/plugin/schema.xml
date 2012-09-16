@@ -1,0 +1,8 @@
+<schema name="alfresco-connector">
+
+   <sql description="Default Data."><![CDATA[
+      INSERT INTO jivedoctype VALUES(2, 'Managed', 'Externally managed document', NULL, NULL, 1);                                                     
+     ]]>
+ </sql>
+ 
+</schema>

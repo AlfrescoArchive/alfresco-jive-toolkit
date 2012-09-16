@@ -1,0 +1,71 @@
+.fileChooser_expandButton {
+    cursor: pointer;
+    float: left;
+    width: 20px;
+	height: 20px;
+}
+
+.fileChooser_directory {
+	clear: both;
+}
+
+.fileChooser_directoryName {
+	height: 20px;
+}
+
+.fileChooser_children .fileChooser_children .fileChooser_directory, 
+.fileChooser_children .fileChooser_children .fileChooser_file,
+.fileChooser_children .fileChooser_children .fileChooser_loadMore {
+    padding-left: 20px;
+    border-left: 1px solid #ccc;
+}
+
+.fileChooser_selectable {
+	cursor: pointer;
+}
+
+.fileChooser_file {
+    padding-left: 20px;
+}
+
+.fileChooser_loading {
+	background-image: url("/images/jive-image-loading.gif");
+	background-repeat: no-repeat;
+	background-position: center left;
+	background-size: 75%;
+}
+
+.fileChooser_expandedFalse {
+	background-image: url("/images/jive-icon-plus.gif");
+    background-repeat: no-repeat;
+    background-position: center left;
+}
+
+.fileChooser_expandedTrue {
+	background-image: url("/images/jive-icon-minus.gif");
+    background-repeat: no-repeat;
+    background-position: center left;
+}
+
+.fileChooser_file_mouseOver, .fileChooser_directory_mouseOver {
+    background-color: #ffc;
+}
+
+.fileChooser_searchInput {
+	width: 70%;
+}
+
+.fileChooser_searchInput_noContent {
+    color: #888;
+    font-style: italic;
+}
+
+.fileChooser_searchButton {
+	width: 20%;
+}
+
+.fileChooser_loadMore, .fileChooser_clearSearch {
+	color: #00f;
+	text-decoration: underline;
+	cursor: pointer;
+}

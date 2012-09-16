@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings>
+<!--  <mirrors>
+    <mirror>
+      <id>jive.archiva</id>
+      <name>Jive Internal</name>
+      <url>http://maven-secure.jiveland.com/archiva/repository/jive.internal</url>
+      <mirrorOf>central</mirrorOf>
+    </mirror>
+    <mirror>
+      <id>jive.snapshots</id>
+      <name>Jive Snapshots</name>
+      <url>http://maven-secure.jiveland.com/archiva/repository/jive.snapshots</url>
+      <mirrorOf>snapshots</mirrorOf>
+    </mirror>
+  </mirrors> -->
+  <profiles>
+    <profile>
+      <id>alfresco.personnel</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <repositories>
+        <repository>
+          <id>alfresco-private-repository</id>
+          <name>Alfresco Private Repository</name>
+          <url>http://artifacts.alfresco.com/nexus/content/groups/private</url>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <id>alfresco-public</id>
+          <name>Alfresco</name>
+          <url>http://artifacts.alfresco.com/nexus/content/repositories/releases</url>
+        </pluginRepository>
+      </pluginRepositories>
+    </profile>
+    <profile>
+      <id>jive.personnel</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+            <repositories>
+        <repository>
+          <id>secure.jive.eap.5_0</id>
+          <name>Secure Jive EAP 5.0</name>
+          <url>http://maven-secure.jivesoftware.com/archiva/repository/eap.5_0</url>
+        </repository>
+        <repository>
+          <id>secure.jive.internal</id>
+          <name>Secure Jive Internal</name>
+          <url>http://maven-secure.jivesoftware.com/archiva/repository/jive.internal</url>
+        </repository>
+        <repository>
+          <id>secure.jive.snapshots</id>
+          <name>Secure Jive Snapshots</name>
+          <url>http://maven-secure.jivesoftware.com/archiva/repository/jive.snapshots</url>
+        </repository>
+        <repository>
+          <id>internal.jive.internal</id>
+          <name>Internal Jive Internal</name>
+          <url>http://maven-secure.jivesoftware.com/archiva/repository/jive.internal</url>
+        </repository>
+        <repository>
+          <id>internal.jive.snapshots</id>
+          <name>Internal Jive Snapshots</name>
+          <url>http://maven-secure.jivesoftware.com/archiva/repository/jive.snapshots</url>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <id>secure.jive.internal</id>
+          <name>Secure Jive Internal</name>
+          <url>http://maven-secure.jivesoftware.com/archiva/repository/jive.internal</url>
+        </pluginRepository>
+        <pluginRepository>
+          <id>secure.jive.snapshots</id>
+          <name>Secure Jive Snapshots</name>
+          <url>http://maven-secure.jivesoftware.com/archiva/repository/jive.snapshots</url>
+        </pluginRepository>
+        <pluginRepository>
+          <id>internal.jive.internal</id>
+          <name>Internal Jive Internal</name>
+          <url>http://maven-secure.jivesoftware.com/archiva/repository/jive.internal</url>
+        </pluginRepository>
+        <pluginRepository>
+          <id>internal.jive.snapshots</id>
+          <name>Internal Jive Snapshots</name>
+          <url>http://maven-secure.jivesoftware.com/archiva/repository/jive.snapshots</url>
+        </pluginRepository>
+      </pluginRepositories> 
+      <properties>
+        <tomcat.home><![CDATA[your_tomcat_path]]></tomcat.home>
+        <tomcat6.home><![CDATA[your_tomcat_path]]></tomcat6.home>
+        <cargo.wait>false</cargo.wait>
+        <jive.setup>true</jive.setup>
+      </properties>
+    </profile>
+  </profiles>
+  <servers>
+    <server>
+      <id>alfresco-private-repository</id>
+      <username>#### USER ID FOR ALFRESCO PRIVATE REPO ####</username>
+      <password>#### PASSWORD FOR ALFRESCO PRIVATE REPO ####</password>
+      <configuration>
+        <timeout>10000</timeout> <!-- 10 seconds -->
+      </configuration>
+    </server>
+    <server>
+      <id>jive.archiva</id>
+      <username>#### USER ID FOR JIVE MAVEN REPOSITORY ####</username>
+      <password>#### PASSWORD FOR JIVE MAVEN REPOSITORY ####</password>
+    </server>
+        <server>
+      <id>jive.archiva</id>
+      <username>#### USER ID FOR JIVE MAVEN REPOSITORY ####</username>
+      <password>#### PASSWORD FOR JIVE MAVEN REPOSITORY ####</password>
+    </server>
+    <server>
+      <id>central</id>
+      <username>#### USER ID FOR JIVE MAVEN REPOSITORY ####</username>
+      <password>#### PASSWORD FOR JIVE MAVEN REPOSITORY ####</password>
+    </server>
+    <server>
+      <id>internal.jive.snapshots</id>
+      <username>#### USER ID FOR JIVE MAVEN REPOSITORY ####</username>
+      <password>#### PASSWORD FOR JIVE MAVEN REPOSITORY ####</password>
+    </server>
+    <server>
+      <id>secure.jive.internal</id>
+      <username>#### USER ID FOR JIVE MAVEN REPOSITORY ####</username>
+      <password>#### PASSWORD FOR JIVE MAVEN REPOSITORY ####</password>
+    </server>
+    <server>
+        <id>secure.jive.eap.5_0</id>
+      <username>#### USER ID FOR JIVE MAVEN REPOSITORY ####</username>
+      <password>#### PASSWORD FOR JIVE MAVEN REPOSITORY ####</password>
+    </server>
+    <server>
+      <id>internal.internal</id>
+      <username>#### USER ID FOR JIVE MAVEN REPOSITORY ####</username>
+      <password>#### PASSWORD FOR JIVE MAVEN REPOSITORY ####</password>
+    </server>
+    <server>
+      <id>internal.snapshots</id>
+      <username>#### USER ID FOR JIVE MAVEN REPOSITORY ####</username>
+      <password>#### PASSWORD FOR JIVE MAVEN REPOSITORY ####</password>
+      </server>
+  </servers>
+</settings>
+

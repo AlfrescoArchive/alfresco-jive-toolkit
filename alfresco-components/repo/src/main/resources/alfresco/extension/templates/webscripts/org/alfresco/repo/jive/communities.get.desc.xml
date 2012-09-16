@@ -1,0 +1,12 @@
+<webscript>
+  <shortname>Jive Communities</shortname>
+  <description>Retrieves the Jive Communities that the currently logged in user has access to.</description>
+  <url>/jive/communities</url>
+  <url>/jive/communities/{communityId}</url>
+  <format default="json">extension</format>
+  <authentication>user</authentication>
+  <family>Jive Toolkit</family>
+  <cache>
+    <never>true</never>
+  </cache>
+</webscript>

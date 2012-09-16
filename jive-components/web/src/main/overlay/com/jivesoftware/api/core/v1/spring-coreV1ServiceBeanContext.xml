@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ $Revision$
+  ~ $Date$
+  ~
+  ~ Copyright (C) 1999-2011 Jive Software. All rights reserved.
+  ~
+  ~ This software is the proprietary information of Jive Software. Use is subject to license terms.
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:core="http://jivesoftware.com/schema/core"
+       xsi:schemaLocation="
+http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
+http://jivesoftware.com/schema/core http://www.jivesoftware.com/schema/core.xsd">
+
+    <!-- Services -->
+    <core:service id="authenticationServiceV1" v="1"
+                  class="com.jivesoftware.api.core.v1.services.AuthenticationService">
+        <property name="logoutHandlers" ref="logoutHandlerList"/>
+        <property name="authenticationProvider" ref="authenticationProvider"/>
+    </core:service>
+
+    <bean id="baseServiceV1" abstract="true" class="com.jivesoftware.api.core.v1.services.BaseService">
+        <property name="converterProvider" ref="converterProviderV1"/>
+        <property name="paginationHelper" ref="paginationHelperV1"/>
+        <property name="attachmentHelper" ref="httpAttachmentHelperV1"/>
+    </bean>
+
+    <bean id="contentServiceV1" abstract="true" parent="baseServiceV1"
+          class="com.jivesoftware.api.core.v1.services.content.ContentService">
+        <property name="likeProvider" ref="likeProviderV1"/>
+    </bean>
+
+    <bean id="commentContentServiceV1" abstract="true" parent="contentServiceV1"
+          class="com.jivesoftware.api.core.v1.services.content.CommentContentService">
+        <property name="commentProvider" ref="commentProviderV1"/>
+        <property name="followingProvider" ref="followingProviderV1"/>
+    </bean>
+
+    <core:service id="userServiceOpenClientV1" v="1" parent="baseServiceV1"
+          class="com.jivesoftware.api.core.v1.services.UserService">
+        <property name="userProvider" ref="userProviderV1"/>
+        <property name="relationshipProvider" ref="relationshipProviderV1"/>
+        <property name="avatarProvider" ref="avatarProviderV1"/>
+        <property name="activityProvider" ref="activityProviderV1"/>
+        <property name="discussionProvider" ref="discussionProviderV1"/>
+        <property name="searchProvider" ref="searchProviderV1"/>
+        <property name="documentProvider" ref="documentProviderV1"/>
+        <property name="followingProvider" ref="followingProviderV1"/>
+    </core:service>
+
+    <bean id="containerServiceOpenClientV1" parent="baseServiceV1" abstract="true"
+          class="com.jivesoftware.api.core.v1.services.containers.ContainerService">
+        <property name="discussionProvider" ref="discussionProviderV1"/>
+        <property name="documentProvider" ref="documentProviderV1"/>
+        <property name="projectProvider" ref="projectProviderV1"/>
+        <property name="searchProvider" ref="searchProviderV1"/>
+        <property name="followingProvider" ref="followingProviderV1"/>
+        <property name="contentSummaryProvider" ref="contentSummaryProvider"/>
+        <property name="activityProvider" ref="activityProviderV1"/>
+    </bean>
+
+    <core:service id="spaceServiceOpenClientV1" v="1" parent="containerServiceOpenClientV1"
+          class="com.jivesoftware.api.core.v1.services.containers.SpaceService">
+        <property name="containerObjectConverter" ref="spaceObjectConverterV1"/>
+        <property name="spaceProvider" ref="spaceProviderV1"/>
+
+        <property name="rootSpace">
+            <bean factory-bean="communityManager" factory-method="getRootCommunity"/>
+        </property>
+    </core:service>
+
+    <core:service id="socialGroupServiceOpenClientV1" v="1" parent="containerServiceOpenClientV1"
+          class="com.jivesoftware.api.core.v1.services.containers.SocialGroupService">
+        <property name="containerObjectConverter" ref="socialGroupObjectConverterV1"/>
+
+        <property name="groupProvider" ref="socialGroupProviderV1"/>
+        <property name="entitlementTypeProvider" ref="entitlementTypeProvider"/>
+        <property name="socialGroupContainerType" ref="groupContainerTypeV1"/>
+    </core:service>
+
+    <core:service id="projectServiceV1" v="1" parent="containerServiceOpenClientV1"
+          class="com.jivesoftware.api.core.v1.services.containers.ProjectService">
+        <property name="containerObjectConverter" ref="projectObjectConverterV1"/>
+    </core:service>
+
+    <core:service id="myServiceOpenClientV1" v="1" parent="baseServiceV1"
+                  class="com.jivesoftware.api.core.v1.services.containers.MyService">
+        <property name="updateProvider" ref="updateProviderV1"/>
+        <property name="activityProvider" ref="activityProviderV1"/>
+        <property name="mentionProvider" ref="mentionProviderV1"/>
+        <property name="relationshipProvider" ref="relationshipProviderV1"/>
+        <property name="userProvider" ref="userProviderV1"/>
+        <property name="discussionProvider" ref="discussionProviderV1"/>
+        <property name="searchProvider" ref="searchProviderV1"/>
+        <property name="documentProvider" ref="documentProviderV1"/>
+    </core:service>
+
+    <core:service id="updateServiceV1" v="1" parent="commentContentServiceV1"
+          class="com.jivesoftware.api.core.v1.services.content.UpdateService">
+        <property name="updateProvider" ref="updateProviderV1"/>
+        <property name="objectConverter" ref="updateObjectConverterV1"/>
+    </core:service>
+
+    <core:service id="imageServiceV1" v="1" parent="baseServiceV1"
+                  class="com.jivesoftware.api.core.v1.services.content.ImageService">
+        <property name="updateProvider" ref="updateProviderV1"/>
+        <property name="imageObjectConverter" ref="imageObjectConverterV1"/>
+        <property name="imageProvider" ref="imageProviderV1"/>
+        <property name="statusLevelProvider" ref="statusLevelProviderV1"/>
+    </core:service>
+
+    <core:service id="commentServiceV1" v="1" parent="contentServiceV1"
+                  class="com.jivesoftware.api.core.v1.services.content.CommentService">
+        <property name="commentProvider" ref="commentProviderV1"/>
+        <property name="objectConverter" ref="commentObjectConverterV1"/>
+    </core:service>
+
+    <core:service id="discussionServiceV1" v="1" parent="baseServiceV1"
+          class="com.jivesoftware.api.core.v1.services.content.DiscussionService">
+        <property name="discussionProvider" ref="discussionProviderV1"/>
+        <property name="messageProvider" ref="messageProviderV1"/>
+        <property name="followingProvider" ref="followingProviderV1"/>
+        <property name="discussionObjectConverter" ref="discussionObjectConverterV1"/>
+    </core:service>
+
+    <core:service id="messageServiceV1" v="1" parent="contentServiceV1"
+                  class="com.jivesoftware.api.core.v1.services.content.MessageService">
+        <property name="messageProvider" ref="messageProviderV1"/>
+        <property name="objectConverter" ref="messageObjectConverterV1"/>
+    </core:service>
+
+    <core:service id="documentServiceV1" v="1" parent="commentContentServiceV1"
+          class="com.jivesoftware.api.core.v1.services.content.DocumentService">
+        <property name="documentProvider" ref="documentProviderV1"/>
+        <property name="objectConverter" ref="documentObjectConverterV1"/>
+    </core:service>
+
+    <core:service id="blogPostServiceV1" v="1" parent="commentContentServiceV1"
+          class="com.jivesoftware.api.core.v1.services.content.BlogPostService">
+        <property name="blogPostProvider" ref="blogPostProviderV1"/>
+        <property name="objectConverter" ref="blogPostObjectConverterV1"/>
+    </core:service>
+
+    <core:service id="blogServiceV1" v="1" parent="baseServiceV1"
+          class="com.jivesoftware.api.core.v1.services.containers.BlogService">
+        <property name="blogPostProvider" ref="blogPostProviderV1"/>
+        <property name="blogProvider" ref="blogProviderV1"/>
+        <property name="searchProvider" ref="searchProviderV1"/>
+        <property name="followingProvider" ref="followingProviderV1"/>
+        <property name="blogObjectConverter" ref="blogObjectConverterV1"/>
+        <property name="stringDateTimeConverter" ref="formStringDateTimeConverterV1"/>
+    </core:service>
+
+    <core:service id="avatarServiceV1" v="1" parent="baseServiceV1"
+          class="com.jivesoftware.api.core.v1.services.content.AvatarService">
+        <property name="avatarProvider" ref="avatarProviderV1"/>
+    </core:service>
+
+    <core:service id="activityServiceV1" v="1" parent="baseServiceV1"
+          class="com.jivesoftware.api.core.v1.services.ActivityService">
+        <property name="activityProvider" ref="activityProviderV1"/>
+    </core:service>
+
+    <core:service id="searchServiceV1" v="1" parent="baseServiceV1"
+                  class="com.jivesoftware.api.core.v1.services.SearchService">
+        <property name="searchProvider" ref="searchProviderV1"/>
+        <property name="typeFilterUtil" ref="typeFilterUtilV1"/>
+        <property name="dateTimeConverter" ref="formStringDateTimeConverterV1"/>
+        <property name="dateTimeStringConverter" ref="dateTimeStringConverterV1"/>
+    </core:service>
+
+    <core:service id="attachmentServiceV1" v="1" parent="baseServiceV1"
+                  class="com.jivesoftware.api.core.v1.services.AttachmentService">
+        <property name="attachmentObjectConverter" ref="attachmentObjectConverterV1"/>
+        <property name="attachmentProvider" ref="attachmentProviderV1"/>
+    </core:service>
+    
+    <!-- Alfresco Connector -->
+ 	<core:service id="alfrescoServiceV1" v="1" parent="baseServiceV1"
+                  class="org.alfresco.jive.community.ws.legacy.AlfrescoService">
+    	<property name="alfrescoNavigationManager" ref="alfrescoNavigationManager"/>
+    	<property name="containerObjectConverter" ref="spaceObjectConverterV1"/>
+    	<property name="documentManager" ref="documentManager"/>
+    	<property name="rootSpace">
+            <bean factory-bean="communityManager" factory-method="getRootCommunity"/>
+        </property>
+        <property name="spaceProvider" ref="spaceProviderV1"/>
+        <property name="userManager" ref="userManagerImpl"/>
+        <property name="jiveContext" ref="jiveContext" />
+        <property name="entityConverter" ref="documentEntityConverterV1"/>
+    </core:service>
+
+</beans>

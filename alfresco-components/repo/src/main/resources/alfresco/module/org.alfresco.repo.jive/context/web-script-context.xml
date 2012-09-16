@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN//EN' 'http://www.springframework.org/dtd/spring-beans.dtd'>
+<beans>
+  
+  <!-- Get Jive Communities -->
+  <bean id="webscript.org.alfresco.repo.jive.communities.get"
+        class="org.alfresco.repo.jive.rest.GetCommunitiesWebScript"
+        parent="webscript">
+    <property name="jiveService" ref="jiveService" />
+  </bean>
+  
+  <!-- Socialise Documents -->
+  <bean id="webscript.org.alfresco.repo.jive.socialize.put"
+        class="org.alfresco.repo.jive.rest.SocializeDocumentsWebScript"
+        parent="webscript">
+    <property name="jiveService" ref="jiveService" />
+  </bean>
+  
+</beans>

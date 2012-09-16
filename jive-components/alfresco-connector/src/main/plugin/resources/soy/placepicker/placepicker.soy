@@ -1,0 +1,349 @@
+{namespace jive.placepicker}
+
+/**
+ * Renders menu options for selecting a container in which to create content.
+ *
+ * @param containers A list of containers to display
+ * @param selectedContentType properties of the selected type of content
+ *
+ * @depends template=jive.placepicker.recentPlaces
+ * @depends i18nKeys=nav.bar.create.heading.*
+ * @depends i18nKeys=nav.bar.create.search.*
+ * @depends i18nKeys=place.picker.move.search.*
+ */
+{template .containers}
+    <nav class="j-nav-back">
+        <p class="font-color-meta">
+            <strong>
+                <span class="{$selectedContentType.iconCss} jive-icon-med"></span>
+                {i18nText($selectedContentType.headingKey)}
+            </strong>
+            (<a href="#" class="back">{i18nText('nav.bar.create.select_different_type')}</a>)
+        </p>
+    </nav>
+
+    <div>
+        <input type="search" name="container-filter" placeholder="{i18nText($selectedContentType.searchPlaceholderKey)}" class="j-form-elem-special j-container-browse-search" />
+    </div>
+
+    <div class="j-places-list">
+        {call .recentPlaces data="all" /}
+    </div>
+
+    <a href="#" class="j-menu-quick-bottomlink">
+        {i18nText('nav.bar.create.browse_places')}
+    </a>
+{/template}
+
+/**
+ * Displays a list of containers.  Use this template to dynamically update the
+ * list of containers in the create menu.
+ *
+ * @param? containers a list of containers to display
+ * @param? userContainerType personal container type
+ * @param? userContainerID id of the user's personal container, if applicable
+ * @param? personalBlogType personal blog type
+ * @param? personalBlogID id of the user's personal blog, if applicable
+ * @param? personalBlogName name of the user's personal blog, if applicable
+ * @param? suggestCreatePersonalBlog Whether or not to suggest that the user create a personal blog.
+ * @param? selectedContentType properties of the selected type of content
+ * @param? upload flag indicating whether the user wants to upload a document
+ *
+ * @depends template=jive.placepicker.containerList
+ * @depends template=jive.placepicker.containerLink
+ * @depends i18nKeys=nav.bar.create.personal_container.*
+ * @depends i18nKeys=blogs.picker.create.new.text
+ * @depends i18nKeys=place.picker.*
+ */
+{template .recentPlaces}
+
+        {if ($suggestCreatePersonalBlog)}
+            <div class="j-places-list-personal">
+                {call jive.shared.soy.i18nHelper}
+                    {param i18nKey}blogs.picker.create.new.text{/param}
+                    {param arg0}
+                        <a href="{buildUrl('blogs-create-blog!input.jspa')}">
+                    {/param}
+                    {param arg1}
+                        </a>
+                    {/param}
+                    {param noAutoEscape: true/}
+                {/call}
+            </div>
+        {elseif ($userContainerType and $userContainerID) }
+            <div class="j-places-list-personal">
+                {call .containerLink}
+                    {param subject: i18nText($selectedContentType.personalContainerTitleKey) /}
+                    {param type: $userContainerType /}
+                    {param id: $userContainerID /}
+                    {param contentType: $selectedContentType.id /}
+                    {param iconCss: 'jive-icon-profile' /}
+                    {param iconSize: 'sml' /}
+                    {param caption: i18nText($selectedContentType.personalContainerCaptionKey) /}
+                    {param writableByUser: true /}
+                    {param upload: $upload /}
+                {/call}
+            </div>
+         {elseif ($personalBlogType and $personalBlogID) }
+            <div class="j-places-list-personal">
+                {call .containerLink}
+                    {param subject: $personalBlogName /}
+                    {param type: $personalBlogType /}
+                    {param id: $personalBlogID /}
+                    {param contentType: $selectedContentType.id /}
+                    {param iconCss: 'jive-icon-blog'/}
+                    {param iconSize: 'sml' /}
+                    {param caption: i18nText($selectedContentType.personalContainerCaptionKey) /}
+                    {param writableByUser: true /}
+                {/call}
+            </div>
+        {/if}
+
+        {if $containers and length($containers) > 0}
+            <h4 class="font-color-meta">{i18nText('place.picker.recent')}</h4>
+            {call .containerList data="all" /}
+        {/if}
+{/template}
+
+/**
+ * Displays a list of containers based on a search.  Use this template to
+ * dynamically update the list of containers in the create menu.
+ *
+ * @depends template=jive.placepicker.containerList
+ */
+{template .searchResults}
+    <h4 class="j-place-search-results font-color-meta">{i18nText('place.picker.search.results')} <em>(<a href="#" class="j-clear-search">{i18nText('place.picker.clear.results')}</a>)</em></h4>
+    {call .containerList data="all" /}
+{/template}
+
+/**
+ * Displays a list of containers each of which may be clicked to create content
+ * in that container.
+ *
+ * @param containers A list of containers to display
+ * @param contentType the selected type of content to choose a container for
+ * @param containerType type of the container that the user is in currently
+ * @param containerID id of the container that the user is in currently
+ * @param? upload flag indicating whether the user wants to upload a document
+ * @param? showSubspaces whether or not a link to subspaces is shown
+ * @param? containerName the container name for the parent of this list
+ * @param? emptyKey The i18n key to display when no results are returned.
+ *
+ * @depends i18nKeys=browse.places.empty.message
+ * @depends template=jive.placepicker.containerLink
+ */
+{template .containerList}
+    {if $containerName}
+        <div class="j-container-selected-space">
+            <a href="#" class="js-parent-container j-subspace-back-link">
+                <span class="jive-icon-sml ui-icon-triangle-1-w"></span>
+                {i18nText('community.list.spaces.navigate.back_to')} {$containerName}
+            </a>
+        </div>
+    {/if}
+    <ul class="j-icon-list wide">
+        {foreach $container in $containers}
+            {call .containerListEntry}
+                {param container: $container /}
+                {param contentType: $contentType /}
+                {param containerType: $containerType /}
+                {param containerID: $containerID /}
+                {param upload: $upload /}
+                {param showSubspaces: $showSubspaces /}
+            {/call}
+        {ifempty}
+             {if $emptyKey}
+                {i18nText($emptyKey)}
+             {else}
+                {i18nText('browse.noresults')}
+            {/if}
+        {/foreach}
+    </ul>
+{/template}
+
+
+/**
+ * Displays a list entry for a list of containers.
+ *
+ * @param container the container to display
+ * @param contentType the selected type of content to choose a container for
+ * @param containerType type of the container that the user is in currently
+ * @param containerID id of the container that the user is in currently
+ * @param? upload flag indicating whether the user wants to upload a document
+ * @param? showSubspaces whether or not a link to subspaces is shown
+ */
+{template .containerListEntry}
+ /* for 'you are here' add the class 'current' (part 1 of 2) */
+    <li {if $container.type == $containerType and $container.id == $containerID}class="current"{/if}>
+        {call .containerLink data="$container"}
+            {param contentType: $contentType /}
+            {param iconSize: 'sml' /}
+            {param upload: $upload /}
+            {param writableByUser: ($container.prop and $container.prop.perms and $container.prop.perms.allowedToContribute and $container.prop.perms.allowedToMove) /}
+        {/call}
+        {if $container.type == $containerType and $container.id == $containerID}
+            <em>{i18nText('nav.bar.create.current_place')}</em> /* -- for 'you are here' (part 2 of 2) */
+        {/if}
+        {if $showSubspaces}
+            {if $container.prop and $container.prop.childInfo and $container.prop.childInfo.hasChildren}
+                <a href="#" class="js-child-spaces j-subspace-view-link font-color-meta"
+                    data-objecttype="{$container.type}"
+                    data-objectid="{$container.id}"
+                    {if $container.prop.parentInfo}
+                        data-parent-objecttype="{$container.prop.parentInfo.containerType}"
+                        data-parent-objectid="{$container.prop.parentInfo.containerID}"
+                    {/if} title="
+                        {if $container.prop.childInfo.numChildren == 1}
+                            {i18nText('browse.info.subspacecount.singular', 1)}
+                        {else}
+                            {i18nText('browse.info.subspacecount.plural', $container.prop.childInfo.numChildren)}
+                        {/if}
+                    ">
+                {if $container.prop.childInfo.numChildren == 1}
+                    {i18nText('browse.info.subspacecount.singular', 1)}
+                {else}
+                    {i18nText('browse.info.subspacecount.plural', $container.prop.childInfo.numChildren)}
+                {/if}
+                <span class="jive-icon-sml ui-icon-triangle-1-e"></span>
+                </a>
+            {/if}
+        {/if}
+    </li>
+{/template}
+
+/**
+ * Displays a link to create a given type of content in a specific container.
+ *
+ * @param subject name of this container
+ * @param type containerType for this container
+ * @param id containerID for this container
+ * @param contentType the selected type of content to choose a container for
+ * @param iconCss The link icon CSS classes, if any.
+ * @param iconSize The size of the icon to render.  Choices are "sml", "med", and "big".  Default is "med".
+ * @param? upload true if uploading a document, false otherwise
+ * @param? caption optional text to display next to the container link
+ * @param? writableByUser Can the user contribute to this container?
+ *
+ * @depends i18nKeys=place.picker.*
+ */
+{template .containerLink}
+    {if ($writableByUser)}
+        {if ($contentType == 14)}
+        <a href="{buildUrl('/community-create!input.jspa', 'community', $id)}" data-objecttype="{$type}" data-objectid="{$id}" class="js-target-container">{else}
+        <a href="{buildUrl('/choose-container.jspa', 'contentType', $contentType, 'containerType', $type, 'container', $id, 'upload', $upload ? 'true' : 'false')}"
+            data-objecttype="{$type}" data-objectid="{$id}" class="js-target-container">
+        {/if}
+    {/if}
+        <span class="{if $writableByUser}{$iconCss} jive-icon-{if $iconSize}{$iconSize}{else}med{/if}{else}jive-icon-sml jive-icon-place-unavailable{/if}"></span>
+        <span class="{if not $writableByUser}jive-container-unavailable-text{/if} js-container-title" {if not $writableByUser}title="{if $type == 2020}{i18nText('place.picker.usercontainer.unavailable')}{else}{i18nText('place.picker.unavailable')}{/if}"{/if}>{$subject}</span>
+    {if ($writableByUser)}</a>{/if}
+    {if $caption}{sp}<span class="j-container-caption font-color-meta">{$caption}</span>{/if}
+
+{/template}
+
+/**
+ * The primary layout for the accordion used when browsing for more content.
+ *
+ * @param filterGroupBean the bean containing the list of accordion section filters
+ * @param userContainer the user container for the content
+ * @param selectedContentType properties of the selected type of content
+ * @param suggestCreatePersonalBlog if the user has the ability to create a personal blog
+ * @param? upload flag indicating whether the user wants to upload a document
+ * @depends template=jive.placepicker.recentPlaces
+ * @depends i18nKeys=place.picker.*
+ * @depends i18nKeys=browse.filter.*
+ * @depends i18nKeys=blogs.picker.create.new.text
+ */
+{template .browseContainers}
+
+    <div class="j-container-browse jive-modal">
+        <header>
+            <h2>{i18nText('place.picker.choose')}</h2>
+        </header>
+        <a href="#" class="j-modal-close-top close">{i18nText('global.close')}  <span class="j-close-icon"></span></a>
+
+        <section class="jive-modal-content">
+        <div>
+            <input type="search" name="container-filter" placeholder="{i18nText($selectedContentType.searchPlaceholderKey)}" class="j-form-elem-special j-container-browse-search" />
+        </div>
+        <div class="js-place-picker-content">
+            <div class="j-container-browse-personal">
+            {if $suggestCreatePersonalBlog}
+                {call jive.shared.soy.i18nHelper}
+                    {param i18nKey}blogs.picker.create.new.text{/param}
+                    {param arg0}
+                        <a href="{buildUrl('blogs-create-blog!input.jspa')}">
+                    {/param}
+                    {param arg1}
+                        </a>
+                    {/param}
+                    {param noAutoEscape: true/}
+                {/call}
+            {elseif $userContainer}
+                {if $selectedContentType.id == 38} // blog post
+                    {call .containerLink}
+                        {param subject: $userContainer.subject /}
+                        {param type: $userContainer.type /}
+                        {param id: $userContainer.id /}
+                        {param contentType: $selectedContentType.id /}
+                        {param iconCss: 'jive-icon-blog'/}
+                        {param iconSize: 'sml' /}
+                        {param caption: i18nText($selectedContentType.personalContainerCaptionKey) /}
+                        {param writableByUser: $userContainer.prop and $userContainer.prop.perms and $userContainer.prop.perms.allowedToContribute and $userContainer.prop.perms.allowedToMove /}
+                    {/call}
+                {else}
+                    {call .containerLink}
+                        {param subject: i18nText($selectedContentType.personalContainerTitleKey) /}
+                        {param type: $userContainer.type /}
+                        {param id: $userContainer.id /}
+                        {param contentType: $selectedContentType.id /}
+                        {param iconCss: 'jive-icon-profile' /}
+                        {param iconSize: 'sml' /}
+                        {param caption: i18nText($selectedContentType.personalContainerCaptionKey) /}
+                        {param writableByUser: $userContainer.prop and $userContainer.prop.perms and $userContainer.prop.perms.allowedToContribute and $userContainer.prop.perms.allowedToMove /}
+                        {param upload: $upload /}
+                    {/call}
+                {/if}
+            {/if}
+            </div>
+            <section class="j-accordion-container">
+            {foreach $filter in $filterGroupBean.filters}
+                    <h4 class="j-accordion-toggle selected">
+                        <a href="#" class="js-accordion-link" data-placefilter="{$filter.id}">{i18nText($filter.description)}</a>
+                    </h4>
+                    <div class="j-places-list" style="display:none"></div>
+            {/foreach}
+            </section>
+        </div>
+        <div class="clearfix">
+            <input type="button" name="Close" class="close j-button" value="{i18nText('global.close')}"/>
+        </div>
+        </section>
+    <div>
+
+{/template}
+
+/**
+ * Writes out list entries for the browse container flow as more entries are appended to an existing ul.
+ *
+ * @param containers A list of containers to display
+ * @param contentType the selected type of content to choose a container for
+ * @param containerType type of the container that the user is in currently
+ * @param containerID id of the container that the user is in currently
+ * @param? upload flag indicating whether the user wants to upload a document
+ * @param? showSubspaces whether or not a link to subspaces is shown
+ *
+ * @depends template=jive.placepicker.containerLink
+ */
+{template .moreContainers}
+    {foreach $container in $containers}
+        {call .containerListEntry}
+            {param container: $container /}
+            {param contentType: $contentType /}
+            {param containerType: $containerType /}
+            {param containerID: $containerID /}
+            {param upload: $upload /}
+            {param showSubspaces: $showSubspaces /}
+        {/call}
+    {/foreach}
+{/template}

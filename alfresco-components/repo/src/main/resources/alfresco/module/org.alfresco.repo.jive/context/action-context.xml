@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN//EN' 'http://www.springframework.org/dtd/spring-beans.dtd'>
+<beans>
+    
+    <bean id="socialize-document" class="org.alfresco.repo.jive.action.SocializeAction" parent="action-executer" depends-on="jivetoolkitResourceBundles">
+        <property name="jiveService" ref="jiveService"/>
+		<property name="publicAction">
+			<value>true</value>
+		</property>
+        <property name="applicableTypes">
+            <list>
+                <value>{http://www.alfresco.org/model/content/1.0}content</value>
+            </list>
+        </property>
+    </bean>
+	
+	<bean id="communities" class="org.alfresco.repo.jive.action.CommunitiesConstraint" parent="action-constraint">
+		<property name="jiveService" ref="jiveService"/>
+		<property name="CacheAllowableValues">
+			<value>false</value>
+		</property>
+	</bean>
+	
+	<bean id="jivetoolkitResourceBundles"
+		class="org.springframework.extensions.surf.util.ResourceBundleBootstrapComponent">
+			<property name="resourceBundles">
+				<list>
+					<value>alfresco.messages.jivetoolkit-config</value>
+				</list>
+			</property>
+	</bean>		
+				
+</beans>

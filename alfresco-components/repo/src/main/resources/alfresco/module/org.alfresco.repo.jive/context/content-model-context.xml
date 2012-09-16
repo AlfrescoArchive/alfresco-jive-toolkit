@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN//EN' 'http://www.springframework.org/dtd/spring-beans.dtd'>
+<beans>
+
+  <!-- Content models for the Jive Toolkit -->
+  <bean id="extension.jive.dictionaryBootstrap" parent="dictionaryModelBootstrap" depends-on="dictionaryBootstrap">
+    <property name="models">
+      <list>
+        <value>alfresco/module/org.alfresco.repo.jive/model/contentModel.xml</value>
+      </list>
+    </property>
+  </bean>
+  
+  
+  <!-- Behaviour for the Jive content model -->
+  <bean id="extension.jive.modelBehaviours" class="org.alfresco.model.jive.JiveSocializedAspect" init-method="init">
+    <property name="policyComponent" ref="policyComponent" />
+    <property name="nodeService"     ref="NodeService" />
+    <property name="jiveService"     ref="jiveService" />
+  </bean>
+</beans>

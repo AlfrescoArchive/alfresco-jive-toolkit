@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~  $Revision: 96475 $
+  ~  $Date: 2009-11-02 16:51:02 -0800 (Mon, 02 Nov 2009) $
+  ~
+  ~  Copyright (C) 1999-${YEAR} Jive Software. All rights reserved.
+  ~
+  ~  This software is the proprietary information of Jive Software. Use is subject to license terms.
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <!--
+     These parameters were pased in via the commandline when this pom was created by the archetype.
+      -->
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.alfresco.integration.jivetoolkit.jive.connector</groupId>
+    <artifactId>alfresco-jivetoolkit-jive</artifactId>
+    <name>alfresco-jivetoolkit-jive</name>
+    <version>1.1.0-${buildnumber}</version>
+    <packaging>jar</packaging>
+    <url>http://www.jivesoftware.com</url>
+
+    <parent>
+        <groupId>org.alfresco.integration.jivetoolkit</groupId>
+        <artifactId>alfresco</artifactId>
+        <version>1.1.0</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    
+    <build>
+        <finalName>${final.name}</finalName>
+        <plugins>
+            <!-- For compilation-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+            <!-- Weave aspects into the plugin -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>aspectj-maven-plugin</artifactId>
+                <version>1.3</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.aspectj</groupId>
+                        <artifactId>aspectjtools</artifactId>
+                        <version>1.6.9</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <aspectLibraries>
+                        <aspectLibrary>
+                            <groupId>org.springframework</groupId>
+                            <artifactId>spring-aspects</artifactId>
+                        </aspectLibrary>
+                    </aspectLibraries>
+                    <source>1.6</source>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin> 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.2</version>
+                <executions>
+                    <execution>
+                        <id>assembly</id>
+                        <phase>package</phase>
+                        <goals><goal>single</goal></goals>
+                        <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <descriptors>
+                                <descriptor>${basedir}/src/main/assembly/assembly-plugin.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <!-- Unpackages this Jive plugin.  That way it can be used in conjunction with the -DpluginDirs= property, which
+                             bypasses the standard plugin installation (which happens via the admin console), by pointing to exploded plugin jar created by this. -->
+                        <id>explode-jive-plugin</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                               <mkdir dir="${basedir}/target/${final.name}" />
+                               <unjar src="${basedir}/target/${final.name}.jar" dest="${basedir}/target/${final.name}" />
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1.2</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- For unit testing -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <excludes>
+                        <exclude>**/selenium/*Test.java</exclude>
+                    </excludes>
+                    <argLine>-Xms128m -Xmx1024m -XX:PermSize=256m -XX:MaxPermSize=1024m</argLine>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+    <dependencies>
+                 
+        <dependency>
+            <groupId>com.jivesoftware</groupId>
+            <artifactId>jive</artifactId>    
+            <version>${jive.version}</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.jivesoftware</groupId>
+            <artifactId>jive-lib</artifactId> 
+            <version>${jive.version}</version>
+            <type>pom</type>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.4</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-aspects</artifactId>
+      <version>3.0.3.RELEASE</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- The following dependencies are for unit testing-->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.4</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.objenesis</groupId>
+            <artifactId>objenesis</artifactId>
+            <version>1.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <version>2.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock-junit4</artifactId>
+            <version>2.4.0</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>1.4.8</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito</artifactId>
+            <version>1.4.8</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.8.5</version>
+            <scope>test</scope>
+        </dependency>
+    <dependency>
+      <groupId>org.apache.chemistry.opencmis</groupId>
+      <artifactId>chemistry-opencmis-client-impl</artifactId>
+      <version>0.3.0</version>
+    </dependency>
+<!--        
+      <dependency>
+            <groupId>org.alfresco.jivetoolkit</groupId>
+            <artifactId>web</artifactId>
+            <version>1.1.0-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/../web/target/custom-overlay.jar</systemPath>
+        </dependency>
+-->
+      <dependency>
+        <groupId>org.alfresco.cmis.client</groupId>
+        <artifactId>alfresco-opencmis-extension</artifactId>
+        <version>0.3</version>      
+      </dependency>
+      <dependency>
+        <groupId>org.alfresco.jivetoolkit</groupId>
+        <artifactId>alfresco-jivetoolkit-opencmisauth</artifactId>
+        <version>1.1.0</version>
+      </dependency>   
+      <dependency>
+        <groupId>org.alfresco.jivetoolkit</groupId>
+        <artifactId>alfresco-jivetoolkit-encryption</artifactId>
+        <version>1.1.0</version>
+      </dependency>
+
+        
+    </dependencies>
+    <!--
+     This is where you set the Jive SBS version your plugin is compiled against.
+      -->
+    <properties>        
+        <final.name>${project.artifactId}-${project.version}</final.name>
+        <build.number>${env.BUILD_NUMBER}</build.number>
+        <build.project.name>${env.TEAMCITY_PROJECT_NAME}</build.project.name>
+        <!-- Alfresco buildnumber -->
+        <buildnumber>SNAPSHOT</buildnumber>
+    </properties>
+</project>

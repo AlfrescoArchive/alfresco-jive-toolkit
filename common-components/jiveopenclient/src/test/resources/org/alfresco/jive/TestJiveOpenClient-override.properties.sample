@@ -1,0 +1,29 @@
+# Copy this file to TestJiveOpenClient-override.properties to enable it.
+
+# Any settings in this file will override the values defined in TestJiveOpenClient.properties 
+jivetoolkit.jive.url=
+jivetoolkit.jive.user=
+jivetoolkit.jive.password=
+jivetoolkit.jive.timeoutInMs=
+
+# Remember: this must match whatever has been configured in Jive
+jivetoolkit.shared.password=
+
+
+
+# Properties used in the Unit tests only
+
+# ---------------------------------------------------------------------
+#     IMPORTANT IMPORTANT IMPORTANT IMPORTANT!
+#     
+# A space with the following id must already exist in Jive, and it must
+# contain at least one sub-space, otherwise a number of the unit tests
+# in this file will fail!!
+# 
+# ---------------------------------------------------------------------
+TestJiveOpenClient.test.spaceid=
+
+
+# The following userid should ideally be different to the one listed
+# above in the jivetoolkit.jive.user property.
+TestJiveOpenClient.test.userid=

@@ -1,0 +1,8 @@
+When a non-Employee contributes to the project, they should update the copyright 
+notice of the file they modified in this format:
+
+[yyyy-yyyy] [NAME] [BRIEF DESCRIPTION]
+
+List below the Contributor's details and a summary of the contribution:
+
+[NAME] <EMAIL> [BRIEF DESCRIPTION]

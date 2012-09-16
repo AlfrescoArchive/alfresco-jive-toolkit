@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN//EN' 'http://www.springframework.org/dtd/spring-beans.dtd'>
+<beans>
+
+  <!-- Jive OpenClient bean -->
+  <bean id="jiveOpenClient" class="org.alfresco.jive.impl.JiveOpenClientImpl" init-method="init">
+    <property name="encrypter"   ref="jive.encrypter" />
+    <property name="jiveUrl"     value="${jivetoolkit.jive.url}" />
+    <property name="userName"    value="${jivetoolkit.jive.user}" />
+    <property name="password"    value="${jivetoolkit.jive.password}" />
+    <property name="timeoutInMs" value="${jivetoolkit.jive.timeoutInMs}" />
+  </bean>
+  
+  <!-- Real Jive Service -->
+  <bean id="realJiveService" class="org.alfresco.repo.jive.impl.JiveServiceImpl">
+    <property name="serviceRegistry" ref="ServiceRegistry" />
+    <property name="jiveOpenClient"  ref="jiveOpenClient" />
+  </bean>
+  
+  <!-- Mock Jive Service - useful for testing when a Jive instance isn't available -->
+  <bean id="mockJiveService" class="org.alfresco.repo.jive.impl.MockJiveService">
+    <property name="serviceRegistry" ref="ServiceRegistry" />
+  </bean>
+  
+  <!-- Placeholder to make it easy to switch between the real and mock impls -->
+  <!-- Switch the value of "parent" as needed between mockJiveService and realJiveService -->
+  <bean id="jiveService" parent="realJiveService" />
+
+</beans>

@@ -1,0 +1,45 @@
+<extension>
+   <modules>
+      <module>
+         <id>Jive Socialize Action</id>
+         <auto-deploy>true</auto-deploy>
+         <customizations>
+         	<customization>
+	           <targetPackageRoot>org.alfresco.components.documentlibrary</targetPackageRoot>
+	           <sourcePackageRoot>org.alfresco.integrations.jivetoolkit.customization</sourcePackageRoot>
+	           <dependencies>
+	              <css>/res/modules/data-picker.css</css>
+	              <js>/res/modules/data-picker.js</js>
+	              <css>/res/jive/modules/community-picker.css</css>
+	              <js>/res/jive/modules/community-picker.js</js>
+	              <css>/res/jive/components/documentlibrary/actions.css</css>
+	              <js>/res/jive/components/documentlibrary/actions.js</js>
+	           </dependencies>
+         	</customization>
+         </customizations>
+         <configurations>
+            <!-- Custom DocLibActions config section -->
+            <config evaluator="string-compare" condition="DocLibActions">
+               <actions>
+                  <action id="document-jive-socialize" type="javascript" 
+                        label="jive.actions.document.socialize" icon="../../../jive/components/documentlibrary/jive">
+                     <param name="function">onJiveActionSocialize</param>
+                     <permissions>
+                        <permission allow="true">Write</permission>
+                     </permissions>
+                     <evaluator negate="true">evaluator.doclib.action.isLocked</evaluator>
+                  </action>
+               </actions>
+               <actionGroups>
+                  <actionGroup id="document-browse">
+                     <action index="400" id="document-jive-socialize" />
+                  </actionGroup>
+                  <actionGroup id="document-details">
+                     <action index="400" id="document-jive-socialize" />
+                  </actionGroup>
+               </actionGroups>
+            </config>
+         </configurations>
+      </module>
+   </modules>
+</extension>

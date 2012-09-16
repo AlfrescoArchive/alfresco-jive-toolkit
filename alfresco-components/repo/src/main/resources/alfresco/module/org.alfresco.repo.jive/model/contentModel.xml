@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Content Model for the Jive Toolkit -->
+<model name="jive:contentModel" xmlns="http://www.alfresco.org/model/dictionary/1.0">
+
+  <description>Jive Toolkit Content Model</description>
+  <author>Peter Monks (pmonks@alfresco.com)</author>
+  <version>1.0</version>
+
+  <imports>
+    <import uri="http://www.alfresco.org/model/dictionary/1.0" prefix="d"/>
+    <import uri="http://www.alfresco.org/model/content/1.0"    prefix="cm"/>
+  </imports>
+
+  <namespaces>
+    <namespace uri="http://www.alfresco.org/model/jive/1.0" prefix="jive"/>
+  </namespaces>
+   
+  <aspects>
+    <aspect name="jive:socialized">
+      <title>Socialized Document</title>
+    </aspect>
+  </aspects>
+   
+</model>

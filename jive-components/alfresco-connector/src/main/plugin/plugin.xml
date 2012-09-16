@@ -1,0 +1,76 @@
+<plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://www.jivesoftware.com/schemas/clearspace/2_5/plugin.xsd">
+    <name>alfresco-connector</name>
+    <description>Alfresco / Jive Toolkit - Plugin that enables Jive to access Alfresco.</description>
+    <author>Alfresco Software Inc.</author>
+    <version>1.1.0.0-SNAPSHOT</version>
+    <minServerVersion>5.0.1.0</minServerVersion>
+    <maxServerVersion>5.0.2.0</maxServerVersion>
+    <databaseKey>alfresco-connector</databaseKey>
+    <databaseVersion>10002</databaseVersion>    
+    
+    <class>org.alfresco.jive.plugin.ConnectorPlugin</class>
+    
+     <components>
+    	<component id="community-actions">
+        <tab id="community-actions-tab">
+            
+            <item id="jive-link-createDocument-manage" name="main.documents.manage_file.link"
+                  cssClass="jive-icon-med jive-icon-document" module="wiki">
+                <when>
+                    <![CDATA[(DocumentPermHelper.getCanCreateDocument(community) && jiveContext.getBinaryBodyManager().isBinaryBodyEnabled())]]></when>
+                <url><![CDATA[<@s.url action="choose-container-remote" method="input">
+                        <@s.param name="contentType" value="${JiveConstants.DOCUMENT?c}"/>
+                        <@s.param name="containerType" value="${community.objectType?c}"/> 
+                        <@s.param name="container" value="${community.ID?c}"/>                       
+                        <@s.param name="upload" value="true"/>
+                        <@s.param name="managed" value="true"/>
+                    </@s.url>]]></url>
+                    
+                    <!--
+                    <url><![CDATA[<@s.url value='/edit-profile-avatar!input.jspa?targetUser=${targetUser.ID?c}'/>]]></url>
+                    -->
+            </item>   
+            
+            <item id="jive-link-linkDocument-manage" name="main.documents.link_managed_file.link"
+                  cssClass="jive-icon-med jive-icon-document" module="wiki">
+                <when>
+                    <![CDATA[(DocumentPermHelper.getCanCreateDocument(community) && jiveContext.getBinaryBodyManager().isBinaryBodyEnabled())]]></when>
+                <url><![CDATA[<@s.url action="choose-document-remote" method="input">
+                        <@s.param name="contentType" value="${JiveConstants.DOCUMENT?c}"/>
+                        <@s.param name="containerType" value="${community.objectType?c}"/> 
+                        <@s.param name="container" value="${community.ID?c}"/>                       
+                        <@s.param name="upload" value="false"/>
+                        <@s.param name="managed" value="true"/>
+                    </@s.url>]]></url>
+                    
+                    <!--
+                    <url><![CDATA[<@s.url value='/edit-profile-avatar!input.jspa?targetUser=${targetUser.ID?c}'/>]]></url>
+                    -->
+            </item>            
+        </tab>        
+    	</component>
+    	
+    	<component id="document-actions">
+        <tab id="document-actions-tab" name="doc.main.actions.gtitle">
+            
+            <item id="jive-link-restore" name="doc.restoreThisVersion.link"
+                  cssClass="jive-icon-med jive-icon-move">
+                <url><![CDATA[javascript:restoreVersion(${version?c});]]></url>
+                <when><![CDATA[(allowedToEdit && !latestVersion && 
+                (document.documentType.ID == jiveContext.getDocumentTypeManager().getDefaultDocumentType().getID()))]]></when>
+            </item>
+            <item id="jive-link-manage-versions" name="doc.main.manage_doc.link"
+                  cssClass="jive-icon-med jive-icon-document-manage">
+                <url><![CDATA[<@s.url value='/docs/${document.documentID}/version'/>]]></url>
+                <when><![CDATA[allowedToEdit && 
+                (document.documentType.ID == jiveContext.getDocumentTypeManager().getDefaultDocumentType().getID())]]></when>
+            </item>
+            
+        </tab>
+    </component>
+    
+    </components>
+    
+   
+</plugin>

@@ -1,0 +1,12 @@
+<upgrade-config>
+    <upgrades>
+        <upgrade order="1">
+            <name>alfresco-connector</name>
+            <tasks>
+            <!-- 
+            	<task version="10002" className="org.alfresco.jive.plugin.ConnectorUpgradeTask"/>                                                       
+             -->    
+            </tasks>
+        </upgrade>
+    </upgrades>
+</upgrade-config>
