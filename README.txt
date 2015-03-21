@@ -49,11 +49,7 @@ Pre-requisites (one-time only steps):
    
    For the Jive login and password, please contact Peter (pmonks@alfresco.com).
    
-5. Check out the source code of the toolkit, from:
-       https://svn.alfresco.com/repos/alfresco-enterprise/integrations/JiveToolkit/HEAD
-   Note: if you're unable to access this URL, it means you don't have access
-   to the Alfresco Enterprise SVN.  You may request access via Brian
-   Remmington.
+5. Check out the source code of the toolkit.
 
 
 Building the AMPs and Jive plugin:
